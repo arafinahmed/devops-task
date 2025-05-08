@@ -1,18 +1,21 @@
-# Use Debian-based Node.js for better native module support
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:18-slim AS builder
 
 WORKDIR /app
 
-# Copy package files first for better caching
+# Copy package files for caching
 COPY package*.json ./
 
-# Install build tools and dependencies
-RUN apk add --no-cache python3 make g++
-RUN yarn install
+# Install build tools and dependencies, then clean up
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
+    && npm ci --omit=dev \
+    && apt-get remove -y python3 make g++ \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy source code
-COPY . .
+COPY src ./src
 
 # Production stage
 FROM node:18-alpine
@@ -20,18 +23,14 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Create non-root user
-RUN addgroup --system --gid 1001 nodejs \
-    && adduser --system --uid 1001 nextjs
+RUN addgroup -S nodejs && adduser -S -u 1001 -G nodejs appuser
 
 # Copy only necessary files from builder
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/yarn.lock ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/src ./src
+COPY --from=builder --chown=appuser:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=appuser:nodejs /app/src ./src
 
 # Set permissions
-RUN chown -R nextjs:nodejs /app
-USER nextjs
+USER appuser
 
 # Expose app port
 EXPOSE 3000

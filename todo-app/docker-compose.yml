@@ -2,38 +2,28 @@ version: '3.8'
 
 services:
   app:
-    build: .
+    image: docker.io/arafinahmed/devops-task:1.0  
+    container_name: todo_app
     ports:
       - "3000:3000"
     environment:
-      MYSQL_HOST: mysql
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin123
-      MYSQL_DB: todo_db
+      - MONGO_URI=mongodb://arafin:admin123@mongo:27017/todo_db
     depends_on:
-      - mysql
-    networks:
-      - todo-network
+      - mongo
+    restart: always
 
-  mysql:
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: admin123
-      MYSQL_DATABASE: todo_db
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin123
-      MYSQL_INITDB_SKIP_TZINFO: 1
-    command: --default-authentication-plugin=mysql_native_password --default-storage-engine=MyISAM
+  mongo:
+    image: mongo:8.0.9-noble
+    container_name: todo_mongo
     ports:
-      - "3306:3306"
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=arafin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+      - MONGO_INITDB_DATABASE=todo_db
     volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - todo-network
-
-networks:
-  todo-network:
-    driver: bridge
+      - mongo_data:/data/db
+    restart: always
 
 volumes:
-  mysql-data:
+  mongo_data:

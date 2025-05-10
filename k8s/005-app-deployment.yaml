@@ -49,6 +49,13 @@ spec:
           limits:
             memory: "256Mi"
             cpu: "200m"
+        volumeMounts:
+        - name: todo-app-storage
+          mountPath: /app/data
+      volumes:
+      - name: todo-app-storage
+        emptyDir:
+          sizeLimit: 2Gi
 ---
 apiVersion: v1
 kind: Service

@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: todo-gateway
+  namespace: devops-task
+spec:
+  selector:
+    istio: ingress
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: todo-app-route
+  namespace: devops-task
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - todo-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: todo-app.devops-task.svc.cluster.local
+            port:
+              number: 3000
+---

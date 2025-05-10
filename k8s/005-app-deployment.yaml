@@ -59,7 +59,5 @@ spec:
   ports:
   - port: 3000
     targetPort: 3000
-    nodePort: 30100
   selector:
     app: todo-app
-  type: NodePort

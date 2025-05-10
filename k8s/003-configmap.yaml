@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-config
+  namespace: devops-task
+data:
+  MONGO_ROOT_USERNAME: mongouser
+  MONGO_DATABASE: todo_db

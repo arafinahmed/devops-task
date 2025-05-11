@@ -1,8 +1,8 @@
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
-  name: todo-gateway
-  namespace: devops-task
+  name: grafana-gateway
+  namespace: monitoring
 spec:
   selector:
     istio: ingress
@@ -12,25 +12,25 @@ spec:
         name: http
         protocol: HTTP
       hosts:
-        - "devops.arafinahmed.com"
+        - "grafana.arafinahmed.com"
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: todo-app-route
-  namespace: devops-task
+  name: grafana-route
+  namespace: monitoring
 spec:
   hosts:
-    - "devops.arafinahmed.com"
+    - "grafana.arafinahmed.com"
   gateways:
-    - todo-gateway
+    - grafana-gateway
   http:
     - match:
         - uri:
             prefix: /
       route:
         - destination:
-            host: todo-app.devops-task.svc.cluster.local
+            host: grafana.monitoring.svc.cluster.local
             port:
-              number: 3000
+              number: 80
 ---

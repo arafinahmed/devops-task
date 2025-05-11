@@ -3,10 +3,6 @@
 `app`: https://devops.arafinahmed.com/
 
 `grafana-dashboard`: https://grafana.arafinahmed.com/
-
-`username`: admin
-
-`password`: arafin
 ## Task 1: Provision a Kubernetes Cluster
 To provision a Kubernetes cluster in AWS EKS, I have written a Terraform script located in the terraform-eks folder. You need to have the Terraform CLI installed on your system to create these AWS resources. Additionally, you must have the required IAM permissions to provision the AWS resources.
 ```
